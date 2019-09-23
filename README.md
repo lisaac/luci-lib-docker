@@ -9,6 +9,7 @@ d = docker.new()
 response_str = d.container:list("containers_name") 
 -- if operate container, just using: d:list("containers_name")
 -- return an response(table type) like this:
+--[[
 {
     message = OK
     protocol = HTTP/1.1
@@ -28,7 +29,7 @@ response_str = d.container:list("containers_name")
 
     }
   }
-
+]]
 response = d.container:list(nil, query_parameters)
 response = d.container:create("containers_name", querymeters, res_parameters)
 response = d.network:list()
