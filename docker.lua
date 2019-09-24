@@ -3,21 +3,6 @@ local json = require 'luci.json'
 local nixio = require 'nixio'
 local http = require 'luci.http.protocol'
 local ltn12 = require 'luci.ltn12'
---[[
-
-  QUICK START:
-  local docker = require "luci.docker"
-  d = docker.new()
-  It will return response (table)
-  response = d.container:list("containers_name")  --> response = d:list("containers_name")
-  response = d.container:list(nil, {filters={name={"containers_name"}}})  --> response = d:list(nil, query_parameters)
-  response = d.container:create("containers_name", query_parmeters, res_parameters)  --> response = d:create("containers_name", nil, res_parameters)
-  response = d.network:list()
-  .....
-
-  https://docs.docker.com/engine/api
-
-]]
 local chunksource = function(sock, buffer)
   buffer = buffer or ''
   return function()

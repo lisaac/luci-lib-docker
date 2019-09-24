@@ -6,9 +6,9 @@ QUICK START:
 ```lua
 local docker = require "luci.docker"
 d = docker.new()
-response_str = d.container:list("containers_name") 
+response_str = d.containers:list("container_name") 
 --[[
--- if operate container, just using: d:list("containers_name")
+-- if operate container, just using: d:list("container_name")
 -- return an response(table type) like this:
 {
   message = OK
@@ -64,9 +64,9 @@ response_str = d.container:list("containers_name")
   }
 }
 ]]
-response = d.container:list(nil, query_parameters)
-response = d.container:create("containers_name", querymeters, res_parameters)
-response = d.network:list()
+response = d.containers:list(nil, query_parameters)
+response = d.containers:create("container_name", querymeters, res_parameters)
+response = d.networks:list()
 response = d:logs("filebrowser", {stdout=1})
 --[[
 
