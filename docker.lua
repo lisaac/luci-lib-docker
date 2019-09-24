@@ -84,6 +84,7 @@ local docker_stream_filter = function(buffer)
     return ''
   end
   return stream_type .. ': ' .. string.sub(buffer, 9, valid_length + 8)
+  -- return string.sub(buffer, 9, valid_length + 8)
 end
 
 local gen_http_req = function(options)
@@ -213,7 +214,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
         name_or_id = nil
       end
     elseif api_action == 'logs' then
-      local body_buffer = {}
+      local body_buffer = ""
       local response =
         send_http_require(
         self.options,
@@ -226,13 +227,13 @@ local gen_api = function(_table, http_method, api_group, api_action)
       )
       if response.code >= 200 and response.code < 300 then
         for i, v in ipairs(response.body) do
-          body_buffer[#body_buffer + 1] = docker_stream_filter(response.body[i])
+          body_buffer = body_buffer .. docker_stream_filter(response.body[i])
         end
         response.body = body_buffer
       end
       return response
     end
-    return send_http_require(
+    local response = send_http_require(
       self.options,
       http_method,
       api_group,
@@ -241,6 +242,10 @@ local gen_api = function(_table, http_method, api_group, api_action)
       query_parameters,
       req_parameters
     )
+    if response.header["Content-Type"] == "application/json" then
+      response.body = json.decode(response.body[1])
+    end
+    return response
   end
 end
 
