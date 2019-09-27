@@ -145,20 +145,20 @@ local send_http_socket = function(socket_path, req)
   return response
 end
 
-local send_http_require = function(options, method, path, operation, name_or_id, query_parameters, req_parameters)
+local send_http_require = function(options, method, path, operation, name_or_id, request_qurey, request_body)
   local par
   local req_options = setmetatable({}, {__index = options})
 
-  query_parameters = query_parameters or {}
-  req_parameters = req_parameters or {}
+  request_qurey = request_qurey or {}
+  request_body = request_body or {}
   if name_or_id == '' then
     name_or_id = nil
   end
   req_options.method = method
   req_options.path =
     '/' .. (path or '') .. (name_or_id and '/' .. name_or_id or '') .. (operation and '/' .. operation or '')
-  if type(query_parameters) == 'table' then
-    for k, v in pairs(query_parameters) do
+  if type(request_qurey) == 'table' then
+    for k, v in pairs(request_qurey) do
       if type(v) == 'table' then
         par = (par and par .. '&' or '?') .. k .. '=' .. http.urlencode(json.encode(v))
       elseif type(v) == 'boolean' then
@@ -169,8 +169,8 @@ local send_http_require = function(options, method, path, operation, name_or_id,
     end
   end
   req_options.path = req_options.path .. (par or '')
-  if type(req_parameters) == 'table' then
-    req_options.conetnt = req_parameters
+  if type(request_body) == 'table' then
+    req_options.conetnt = request_body
   end
   return send_http_socket(req_options.socket_path, gen_http_req(req_options))
 end
@@ -183,19 +183,19 @@ local gen_api = function(_table, http_method, api_group, api_action)
     _api_action = 'json'
   end
 
-  _table[api_group][api_action] = function(self, name_or_id, query_parameters, req_parameters)
+  _table[api_group][api_action] = function(self, name_or_id, request_qurey, request_body)
     if api_action == 'list' then
       if (name_or_id ~= '' or name_or_id ~= nil) then
-        query_parameters = query_parameters or {}
-        query_parameters.filters = query_parameters.filters or {}
-        query_parameters.filters.name = query_parameters.filters.name or {}
-        query_parameters.filters.name[#query_parameters.filters.name + 1] = name_or_id
+        request_qurey = request_qurey or {}
+        request_qurey.filters = request_qurey.filters or {}
+        request_qurey.filters.name = request_qurey.filters.name or {}
+        request_qurey.filters.name[#request_qurey.filters.name + 1] = name_or_id
         name_or_id = nil
       end
     elseif api_action == 'create' then
       if (name_or_id ~= '' or name_or_id ~= nil) then
-        query_parameters = query_parameters or {}
-        query_parameters.name = query_parameters.name or name_or_id
+        request_qurey = request_qurey or {}
+        request_qurey.name = request_qurey.name or name_or_id
         name_or_id = nil
       end
     elseif api_action == 'logs' then
@@ -207,8 +207,8 @@ local gen_api = function(_table, http_method, api_group, api_action)
         api_group,
         _api_action,
         name_or_id,
-        query_parameters,
-        req_parameters
+        request_qurey,
+        request_body
       )
       if response.code >= 200 and response.code < 300 then
         for i, v in ipairs(response.body) do
@@ -224,10 +224,10 @@ local gen_api = function(_table, http_method, api_group, api_action)
       api_group,
       _api_action,
       name_or_id,
-      query_parameters,
-      req_parameters
+      request_qurey,
+      request_body
     )
-    if response.header["Content-Type"] == "application/json" then
+    if response.headers["Content-Type"] == "application/json" then
       response.body = json.decode(response.body[1])
     end
     return response

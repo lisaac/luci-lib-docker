@@ -64,8 +64,8 @@ response_str = d.containers:list("container_name")
   }
 }
 ]]
-response = d.containers:list(nil, query_parameters)
-response = d.containers:create("container_name", querymeters, res_parameters)
+response = d.containers:list(nil, request_qurey)
+response = d.containers:create("container_name", request_qurey, request_body)
 response = d.networks:list()
 response = d:logs("filebrowser", {stdout=1})
 --[[
@@ -114,4 +114,4 @@ stdout: 2019/09/12 12:57:05 /api/renew: 403 10.1.1.216:35818 <nil>
 .....
 ```
 
-Parameters: https://docs.docker.com/engine/api
+`request_qurey` `request_body` Parameters: https://docs.docker.com/engine/api
