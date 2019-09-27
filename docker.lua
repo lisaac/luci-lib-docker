@@ -258,7 +258,7 @@ gen_api(_docker, 'POST', 'containers', 'prune')
 gen_api(_docker, 'POST', 'containers', 'exec')
 gen_api(_docker, 'POST', 'exec', 'start')
 gen_api(_docker, 'POST', 'exec', 'resize')
-gen_api(_docker, 'POST', 'exec', 'inspect')
+gen_api(_docker, 'GET', 'exec', 'inspect')
 -- TODO: export,attch, get, put
 
 gen_api(_docker, 'GET', 'images', 'list')
