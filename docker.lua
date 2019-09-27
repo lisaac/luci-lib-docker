@@ -234,7 +234,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
   end
 end
 
-local _docker = {containers = {}, images = {}, networks = {}, volumes = {}}
+local _docker = {containers = {}, exec = {}, images = {}, networks = {}, volumes = {}}
 
 gen_api(_docker, 'GET', 'containers', 'list')
 gen_api(_docker, 'POST', 'containers', 'create')
@@ -322,6 +322,16 @@ function _docker.new(socket_path, host, version, user_agent, protocol)
   )
   setmetatable(
     docker.images,
+    {
+      __index = function(t, key)
+        if key == 'options' then
+          return docker.options
+        end
+      end
+    }
+  )
+  setmetatable(
+    docker.exec,
     {
       __index = function(t, key)
         if key == 'options' then
