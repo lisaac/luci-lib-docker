@@ -179,7 +179,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
   local _api_action
   if api_action ~= 'list' and api_action ~= 'inspect' and api_action ~= 'remove' then
     _api_action = api_action
-  elseif (api_group == 'containers' or api_group == 'images') and (api_action == 'list' or api_action == 'inspect') then
+  elseif (api_group == 'containers' or api_group == 'images' or api_group == 'exec') and (api_action == 'list' or api_action == 'inspect') then
     _api_action = 'json'
   end
 
@@ -256,6 +256,9 @@ gen_api(_docker, 'POST', 'containers', 'update')
 gen_api(_docker, 'DELETE', 'containers', 'remove')
 gen_api(_docker, 'POST', 'containers', 'prune')
 gen_api(_docker, 'POST', 'containers', 'exec')
+gen_api(_docker, 'POST', 'exec', 'start')
+gen_api(_docker, 'POST', 'exec', 'resize')
+gen_api(_docker, 'POST', 'exec', 'inspect')
 -- TODO: export,attch, get, put
 
 gen_api(_docker, 'GET', 'images', 'list')
