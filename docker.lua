@@ -79,13 +79,15 @@ local gen_http_req = function(options)
   req = (options.method or 'GET') .. ' ' .. options.path .. ' ' .. options.protocol .. '\r\n'
   req = req .. 'Host: ' .. options.host .. '\r\n'
   req = req .. 'User-Agent: ' .. options.user_agent .. '\r\n'
+  req = req .. 'Connection: close\r\n'
   if options.method == 'POST' and type(options.conetnt) == 'table' then
     local conetnt_json = json.encode(options.conetnt)
     req = req .. 'Content-Type: application/json\r\n'
     req = req .. 'Content-Length: ' .. #conetnt_json .. '\r\n'
     req = req .. '\r\n' .. conetnt_json
+  else
+    req = req .. '\r\n'
   end
-  req = req .. 'Connection: close\r\n\r\n'
   return req
 end
 
