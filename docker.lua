@@ -188,11 +188,15 @@ local gen_api = function(_table, http_method, api_group, api_action)
   _table[api_group][api_action] = function(self, name_or_id, request_qurey, request_body)
     if api_action == 'list' then
       if (name_or_id ~= '' or name_or_id ~= nil) then
-        request_qurey = request_qurey or {}
-        request_qurey.filters = request_qurey.filters or {}
-        request_qurey.filters.name = request_qurey.filters.name or {}
-        request_qurey.filters.name[#request_qurey.filters.name + 1] = name_or_id
-        name_or_id = nil
+        if api_group == "images" then
+          name_or_id = nil
+        else
+          request_qurey = request_qurey or {}
+          request_qurey.filters = request_qurey.filters or {}
+          request_qurey.filters.name = request_qurey.filters.name or {}
+          request_qurey.filters.name[#request_qurey.filters.name + 1] = name_or_id
+          name_or_id = nil
+        end
       end
     elseif api_action == 'create' then
       if (name_or_id ~= '' or name_or_id ~= nil) then
