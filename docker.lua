@@ -3,6 +3,7 @@ local json = require 'luci.json'
 local nixio = require 'nixio'
 local http = require 'luci.http.protocol'
 local ltn12 = require 'luci.ltn12'
+local fs = require 'nixio.fs'
 local chunksource = function(sock, buffer)
   buffer = buffer or ''
   return function()
@@ -147,9 +148,12 @@ local send_http_socket = function(socket_path, req)
   return response
 end
 
-local send_http_require = function(options, method, path, operation, name_or_id, request_qurey, request_body)
-  local par
+local send_http_require = function(options, method, api_group, api_action, name_or_id, request_qurey, request_body)
+  local qurey
   local req_options = setmetatable({}, {__index = options})
+
+  -- for docker action status
+  fs.writefile(options.status_path, api_group .. " " .. api_action .. " " .. name_or_id)
 
   request_qurey = request_qurey or {}
   request_body = request_body or {}
@@ -158,23 +162,26 @@ local send_http_require = function(options, method, path, operation, name_or_id,
   end
   req_options.method = method
   req_options.path =
-    '/' .. (path or '') .. (name_or_id and '/' .. name_or_id or '') .. (operation and '/' .. operation or '')
+    '/' .. (api_group or '') .. (name_or_id and '/' .. name_or_id or '') .. (api_action and '/' .. api_action or '')
   if type(request_qurey) == 'table' then
     for k, v in pairs(request_qurey) do
       if type(v) == 'table' then
-        par = (par and par .. '&' or '?') .. k .. '=' .. http.urlencode(json.encode(v))
+        qurey = (qurey and qurey .. '&' or '?') .. k .. '=' .. http.urlencode(json.encode(v))
       elseif type(v) == 'boolean' then
-        par = (par and par .. '&' or '?') .. k .. '=' .. (v and 'true' or 'false')
+        qurey = (qurey and qurey .. '&' or '?') .. k .. '=' .. (v and 'true' or 'false')
       elseif type(v) == 'number' or type(v) == 'string' then
-        par = (par and par .. '&' or '?') .. k .. '=' .. v
+        qurey = (qurey and qurey .. '&' or '?') .. k .. '=' .. v
       end
     end
   end
-  req_options.path = req_options.path .. (par or '')
+  req_options.path = req_options.path .. (qurey or '')
   if type(request_body) == 'table' then
     req_options.conetnt = request_body
   end
-  return send_http_socket(req_options.socket_path, gen_http_req(req_options))
+  local response = send_http_socket(req_options.socket_path, gen_http_req(req_options))
+  -- for docker action status
+  fs.remove(options.status_path)
+  return response
 end
 
 local gen_api = function(_table, http_method, api_group, api_action)
@@ -292,7 +299,8 @@ function _docker.new(socket_path, host, version, user_agent, protocol)
     host = host or 'localhost',
     version = version or 'v1.40',
     user_agent = user_agent or 'luci/0.12',
-    protocol = protocol or 'HTTP/1.1'
+    protocol = protocol or 'HTTP/1.1',
+    status_path = status_path or '/tmp/.docker_action_status'
   }
   setmetatable(
     docker,
