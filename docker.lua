@@ -225,6 +225,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
         for _, v in ipairs(response.body) do
           tmp[#tmp+1] = json.decode(v)
         end
+        response.body = tmp
       end
     end
     return response
