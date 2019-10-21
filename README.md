@@ -111,6 +111,32 @@ stdout: 2019/09/12 12:57:05 /api/renew: 403 10.1.1.216:35818 <nil>
 }
 
 ]]
+
+
+response = d.containers:get_archive("filebrowser", {path="/tmp/myfiles.tar.gz"})
+nixio.fs.writefile("/tmp/myfiles.tar.gz", table.concat(response.body))
+
+f = nixio.fs.readfile("/tmp/myfiles.tar.gz")
+response = d.containers:put_archive("filebrowser", {path="/tmp/"}, f)
+--[[
+  {
+    message = OK
+    protocol = HTTP/1.1
+    code = 200
+    headers = {
+      Ostype = linux
+      Content-Length = 0
+      Api-Version = 1.40
+      Date = Mon, 21 Oct 2019 04:24:23 GMT
+      Connection = close
+      Docker-Experimental = false
+      Server = Docker/19.03.3 (linux)
+    }
+    body = {
+    }
+  }
+]]
+
 .....
 ```
 

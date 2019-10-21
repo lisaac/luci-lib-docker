@@ -81,9 +81,14 @@ local gen_http_req = function(options)
     req = req .. "Content-Type: application/json\r\n"
     req = req .. "Content-Length: " .. #conetnt_json .. "\r\n"
     req = req .. "\r\n" .. conetnt_json
+  elseif options.method == "PUT" and options.conetnt then
+    req = req .. "Content-Type: application/x-tar\r\n"
+    req = req .. "Content-Length: " .. #options.conetnt .. "\r\n"
+    req = req .. "\r\n" .. options.conetnt
   else
     req = req .. "\r\n"
   end
+  -- io.popen("echo '".. req .. "' >> /tmp/dkhttp")
   return req
 end
 
@@ -169,9 +174,9 @@ local send_http_require = function(options, method, api_group, api_action, name_
     end
   end
   req_options.path = req_options.path .. (qurey or "")
-  if type(request_body) == "table" then
+  -- if type(request_body) == "table" then
     req_options.conetnt = request_body
-  end
+  -- end
   local response = send_http_socket(req_options.socket_path, gen_http_req(req_options))
   -- for docker action status
   fs.remove(options.status_path)
@@ -180,7 +185,9 @@ end
 
 local gen_api = function(_table, http_method, api_group, api_action)
   local _api_action
-  if api_action ~= "list" and api_action ~= "inspect" and api_action ~= "remove" then
+  if api_action == "get_archive" or api_action == "put_archive" then
+    _api_action = "archive"
+  elseif api_action ~= "list" and api_action ~= "inspect" and api_action ~= "remove" then
     _api_action = api_action
   elseif (api_group == "containers" or api_group == "images" or api_group == "exec") and (api_action == "list" or api_action == "inspect") then
     _api_action = "json"
@@ -263,7 +270,9 @@ gen_api(_docker, "POST", "containers", "exec")
 gen_api(_docker, "POST", "exec", "start")
 gen_api(_docker, "POST", "exec", "resize")
 gen_api(_docker, "GET", "exec", "inspect")
--- TODO: export,attch, get, put
+gen_api(_docker, "GET", "containers", "get_archive")
+gen_api(_docker, "PUT", "containers", "put_archive")
+-- TODO: export,attch
 
 gen_api(_docker, "GET", "images", "list")
 gen_api(_docker, "POST", "images", "create")
