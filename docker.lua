@@ -88,7 +88,7 @@ local gen_http_req = function(options)
   else
     req = req .. "\r\n"
   end
-  -- io.popen("echo '".. req .. "' >> /tmp/dkhttp")
+  if options.debug then io.popen("echo '".. req .. "' >> " .. debug_path) end
   return req
 end
 
@@ -153,7 +153,9 @@ local send_http_require = function(options, method, api_group, api_action, name_
   local req_options = setmetatable({}, {__index = options})
 
   -- for docker action status
-  fs.writefile(options.status_path, api_group or "" .. " " .. api_action or "" .. " " .. name_or_id or "")
+  if status_enabled then
+    fs.writefile(options.status_path, api_group or "" .. " " .. api_action or "" .. " " .. name_or_id or "")
+  end
 
   -- request_qurey = request_qurey or {}
   -- request_body = request_body or {}
@@ -179,7 +181,9 @@ local send_http_require = function(options, method, api_group, api_action, name_
   -- end
   local response = send_http_socket(req_options.socket_path, gen_http_req(req_options))
   -- for docker action status
-  fs.remove(options.status_path)
+  if options.status_enabled then
+    fs.remove(options.status_path)
+  end
   return response
 end
 
@@ -195,7 +199,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
 
   local fp = function(self, name_or_id, request_qurey, request_body)
     if api_action == "list" then
-      if (name_or_id ~= "" or name_or_id ~= nil) then
+      if (name_or_id ~= "" and name_or_id ~= nil) then
         if api_group == "images" then
           name_or_id = nil
         else
@@ -207,7 +211,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
         end
       end
     elseif api_action == "create" then
-      if (name_or_id ~= "" or name_or_id ~= nil) then
+      if (name_or_id ~= "" and name_or_id ~= nil) then
         request_qurey = request_qurey or {}
         request_qurey.name = request_qurey.name or name_or_id
         name_or_id = nil
@@ -294,15 +298,19 @@ gen_api(_docker, "POST", "networks", "prune")
 
 gen_api(_docker, "GET", nil, "events")
 
-function _docker.new(socket_path, host, version, user_agent, protocol)
+function _docker.new(options)
   local docker = {}
+  local _options = options or {}
   docker.options = {
-    socket_path = socket_path or "/var/run/docker.sock",
-    host = host or "localhost",
-    version = version or "v1.40",
-    user_agent = user_agent or "luci/0.12",
-    protocol = protocol or "HTTP/1.1",
-    status_path = status_path or "/tmp/.docker_action_status"
+    socket_path = _options.socket_path or "/var/run/docker.sock",
+    host = _options.host or "localhost",
+    version = _options.version or "v1.40",
+    user_agent = _options.user_agent or "luci/0.12",
+    protocol = _options.protocol or "HTTP/1.1",
+    status_enabled = _options.status_enabled or true,
+    status_path = _options.status_path or "/tmp/.docker_action_status",
+    debug = _options.debug or false,
+    debug_path = "/tmp/dkhttp"
   }
   setmetatable(
     docker,
