@@ -88,7 +88,7 @@ local gen_http_req = function(options)
   else
     req = req .. "\r\n"
   end
-  if options.debug then io.popen("echo '".. req .. "' >> " .. debug_path) end
+  if options.debug then io.popen("echo '".. req .. "' >> " .. options.debug_path) end
   return req
 end
 
@@ -153,7 +153,7 @@ local send_http_require = function(options, method, api_group, api_action, name_
   local req_options = setmetatable({}, {__index = options})
 
   -- for docker action status
-  if status_enabled then
+  if options.status_enabled then
     fs.writefile(options.status_path, api_group or "" .. " " .. api_action or "" .. " " .. name_or_id or "")
   end
 
@@ -310,7 +310,7 @@ function _docker.new(options)
     status_enabled = _options.status_enabled or true,
     status_path = _options.status_path or "/tmp/.docker_action_status",
     debug = _options.debug or false,
-    debug_path = "/tmp/dkhttp"
+    debug_path = _options.debug or "/tmp/dkhttp"
   }
   setmetatable(
     docker,
