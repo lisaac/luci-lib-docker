@@ -310,7 +310,7 @@ function _docker.new(options)
     status_enabled = _options.status_enabled or true,
     status_path = _options.status_path or "/tmp/.docker_action_status",
     debug = _options.debug or false,
-    debug_path = _options.debug or "/tmp/dkhttp"
+    debug_path = _options.debug_path or "/tmp/dkhttp"
   }
   setmetatable(
     docker,
