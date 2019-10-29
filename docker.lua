@@ -1,7 +1,6 @@
 require "nixio.util"
 local json = require "luci.json"
 local nixio = require "nixio"
-local http = require "luci.http.protocol"
 local ltn12 = require "luci.ltn12"
 local fs = require "nixio.fs"
 local chunksource = function(sock, buffer)
@@ -76,6 +75,11 @@ local gen_http_req = function(options)
   req = req .. "Host: " .. options.host .. "\r\n"
   req = req .. "User-Agent: " .. options.user_agent .. "\r\n"
   req = req .. "Connection: close\r\n"
+  if type(options.header) == "table" then
+    for k, v in pairs(options.header) do
+      req = req .. k .. ": " .. v .."\r\n"
+    end
+  end
   if options.method == "POST" and type(options.conetnt) == "table" then
     local conetnt_json = json.encode(options.conetnt)
     req = req .. "Content-Type: application/json\r\n"
@@ -164,10 +168,18 @@ local send_http_require = function(options, method, api_group, api_action, name_
   end
   req_options.method = method
   req_options.path = (api_group and ("/" .. api_group) or "") .. (name_or_id and ("/" .. name_or_id) or "") .. (api_action and ("/" .. api_action) or "")
+  req_options.header = {}
   if type(request_qurey) == "table" then
     for k, v in pairs(request_qurey) do
       if type(v) == "table" then
-        qurey = (qurey and qurey .. "&" or "?") .. k .. "=" .. http.urlencode(json.encode(v))
+        if k ~= "_header" then
+          qurey = (qurey and qurey .. "&" or "?") .. k .. "=" .. luci.util.urlencode(json.encode(v))
+        else
+          -- for http header
+          for k1, v1 in pairs(v) do
+            req_options.header[k1] = v1
+          end
+        end
       elseif type(v) == "boolean" then
         qurey = (qurey and qurey .. "&" or "?") .. k .. "=" .. (v and "true" or "false")
       elseif type(v) == "number" or type(v) == "string" then
@@ -177,7 +189,7 @@ local send_http_require = function(options, method, api_group, api_action, name_
   end
   req_options.path = req_options.path .. (qurey or "")
   -- if type(request_body) == "table" then
-    req_options.conetnt = request_body
+  req_options.conetnt = request_body
   -- end
   local response = send_http_socket(req_options.socket_path, gen_http_req(req_options))
   -- for docker action status
