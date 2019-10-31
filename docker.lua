@@ -317,12 +317,12 @@ function _docker.new(options)
     socket_path = _options.socket_path or "/var/run/docker.sock",
     host = _options.host or "localhost",
     version = _options.version or "v1.40",
-    user_agent = _options.user_agent or "luci/0.12",
+    user_agent = _options.user_agent or "LuCI",
     protocol = _options.protocol or "HTTP/1.1",
     status_enabled = _options.status_enabled or true,
     status_path = _options.status_path or "/tmp/.docker_action_status",
     debug = _options.debug or false,
-    debug_path = _options.debug_path or "/tmp/dkhttp"
+    debug_path = _options.debug_path or "/tmp/.docker_debug"
   }
   setmetatable(
     docker,
