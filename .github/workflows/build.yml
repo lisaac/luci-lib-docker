@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: checkout codes
-      - uses: actions/checkout@v1
+        uses: actions/checkout@v1
         env:
           GITHUB_WORKSPACE: /tmp/source
       - name: build
