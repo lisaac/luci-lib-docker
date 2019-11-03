@@ -1,8 +1,8 @@
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    #tags:
-    #- 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+#     Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 name: Upload Release Asset
 
@@ -13,18 +13,16 @@ jobs:
     steps:
       - name: checkout codes
         uses: actions/checkout@v1
-        env:
-          GITHUB_WORKSPACE: /tmp/source
       - name: build
         run: |
           mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
-          [ -d /tmp/source/luasrc ] && cp -R /tmp/source/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci
-          [ -d /tmp/source/root ] && cp -R /tmp/source/root/* /tmp/luci-lib-docker/
-          [ -d /tmp/source/htdoc ] && cp -R /tmp/source/htdoc/* /tmp/luci-lib-docker/www/
+          [ -d $GITHUB_WORKSPACE/luasrc ] && cp -R $GITHUB_WORKSPACE/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci/
+          [ -d $GITHUB_WORKSPACE/root ] && cp -R $GITHUB_WORKSPACE/root/* /tmp/luci-lib-docker/
+          [ -d $GITHUB_WORKSPACE/htdoc ] && cp -R $GITHUB_WORKSPACE/htdoc/* /tmp/luci-lib-docker/www/
           mkdir -p /tmp/luci-lib-docker/CONTROL
           cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
           Package: luci-lib-docker
-          Version: 0.1-by-actions
+          Version: ${{ github.ref }}
           Architecture: all
           Maintainer: lisaac<lisaac.cn@gmail.com>
           Section: base
@@ -41,8 +39,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 0.1
-          release_name: Release 0.1
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -52,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /tmp/luci-lib-docker_0.1-by-actions_all.ipk
-          asset_name: luci-lib-docker_0.1-by-actions_all.ipk
+          asset_path: /tmp/luci-lib-docker_${{ github.ref }}_all.ipk
+          asset_name: luci-lib-docker_${{ github.ref }}_all.ipk
           asset_content_type: application/octet-stream
