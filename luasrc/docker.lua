@@ -1,9 +1,12 @@
 require "nixio.util"
-local json = require "luci.json"
+-- local json = require "luci.json"
 local nixio = require "nixio"
 local ltn12 = require "luci.ltn12"
 local fs = require "nixio.fs"
+
 local urlencode = luci.http and luci.http.protocol and luci.http.protocol.urlencode or luci.util.urlencode
+local json_stringify = luci.json and luci.json.encode or luci.jsonc.stringify
+local json_parse = luci.json and luci.json.decode or luci.jsonc.parse
 
 local chunksource = function(sock, buffer)
   buffer = buffer or ""
@@ -83,7 +86,7 @@ local gen_http_req = function(options)
     end
   end
   if options.method == "POST" and type(options.conetnt) == "table" then
-    local conetnt_json = json.encode(options.conetnt)
+    local conetnt_json = json_stringify(options.conetnt)
     req = req .. "Content-Type: application/json\r\n"
     req = req .. "Content-Length: " .. #conetnt_json .. "\r\n"
     req = req .. "\r\n" .. conetnt_json
@@ -175,7 +178,7 @@ local send_http_require = function(options, method, api_group, api_action, name_
     for k, v in pairs(request_qurey) do
       if type(v) == "table" then
         if k ~= "_header" then
-          qurey = (qurey and qurey .. "&" or "?") .. k .. "=" .. urlencode(json.encode(v))
+          qurey = (qurey and qurey .. "&" or "?") .. k .. "=" .. urlencode(json_stringify(v))
         else
           -- for http header
           for k1, v1 in pairs(v) do
@@ -244,11 +247,11 @@ local gen_api = function(_table, http_method, api_group, api_action)
     local response = send_http_require(self.options, http_method, api_group, _api_action, name_or_id, request_qurey, request_body)
     if response.headers["Content-Type"] == "application/json" then
       if #response.body == 1 then
-        response.body = json.decode(response.body[1])
+        response.body = json_parse(response.body[1])
       else
         local tmp = {}
         for _, v in ipairs(response.body) do
-          tmp[#tmp+1] = json.decode(v)
+          tmp[#tmp+1] = json_parse(v)
         end
         response.body = tmp
       end

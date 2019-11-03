@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v1
       - name: build
         run: |
+          tag_name=$(echo ${{ github.ref }}) | cut -d "/" -f3)
           mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
           [ -d $GITHUB_WORKSPACE/luasrc ] && cp -R $GITHUB_WORKSPACE/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci/
           [ -d $GITHUB_WORKSPACE/root ] && cp -R $GITHUB_WORKSPACE/root/* /tmp/luci-lib-docker/
@@ -22,7 +23,7 @@ jobs:
           mkdir -p /tmp/luci-lib-docker/CONTROL
           cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
           Package: luci-lib-docker
-          Version: ${{ github.sha }}
+          Version: $tag_name
           Architecture: all
           Maintainer: lisaac<lisaac.cn@gmail.com>
           Section: base
@@ -50,6 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /tmp/luci-lib-docker_${{ github.sha }}_all.ipk
-          asset_name: luci-lib-docker_${{ github.sha }}_all.ipk
+          asset_path: /tmp/luci-lib-docker_$tag_name_all.ipk
+          asset_name: luci-lib-docker_$tag_name_all.ipk
           asset_content_type: application/octet-stream
