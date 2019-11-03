@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v1
       - name: build
         run: |
-          tag_name=$(echo ${{ github.ref }}) | cut -d "/" -f3)
+          tag_name=$(echo ${{ github.ref }} | cut -d "/" -f3)
           mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
           [ -d $GITHUB_WORKSPACE/luasrc ] && cp -R $GITHUB_WORKSPACE/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci/
           [ -d $GITHUB_WORKSPACE/root ] && cp -R $GITHUB_WORKSPACE/root/* /tmp/luci-lib-docker/
