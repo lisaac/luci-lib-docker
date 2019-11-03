@@ -31,7 +31,7 @@ jobs:
           Priority: optional
           Description: Docker Engine API for LuCI
           Source: http://github.com/lisaac/luci-lib-docker
-          EOF && \
+          EOF
           wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build && \
           chmod +x /tmp/ipkg-build && \
           /tmp/ipkg-build -o root -g root /tmp/luci-lib-docker /tmp
@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: 0.1
+          release_name: Release 0.1
           draft: false
           prerelease: false
       - name: Upload Release Asset
