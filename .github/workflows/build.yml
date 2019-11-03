@@ -7,30 +7,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout Codes
-    - uses: actions/checkout@v1
-      env:
-        GITHUB_WORKSPACE: /tmp/source
-      with:
-        GITHUB_WORKSPACE: /tmp/source
-    - name: Build
-      run: |
-        mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
-        [ -d /tmp/source/luasrc ] && cp -R /tmp/source/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci
-        [ -d /tmp/source/root ] && cp -R /tmp/source/root/* /tmp/luci-lib-docker/
-        [ -d /tmp/source/htdoc ] && cp -R /tmp/source/htdoc/* /tmp/luci-lib-docker/www/
-        mkdir -p /tmp/luci-lib-docker/CONTROL
-        cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
-        Package: luci-lib-docker
-        Version: 0.1-by-actions
-        Architecture: all
-        Maintainer: lisaac<lisaac.cn@gmail.com>
-        Section: base
-        Priority: optional
-        Description: Docker Engine API for LuCI
-        Source: http://github.com/lisaac/luci-lib-docker
-        EOF
-        wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build
-        chmod +x /tmp/ipkg-build
-        /tmp/ipkg-build -o root -g root /tmp/luci-lib-docker /tmp
+      - name: checkout codes
+      - uses: actions/checkout@v1
+        env:
+          GITHUB_WORKSPACE: /tmp/source
+      - name: build
+        run: |
+          mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
+          [ -d /tmp/source/luasrc ] && cp -R /tmp/source/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci
+          [ -d /tmp/source/root ] && cp -R /tmp/source/root/* /tmp/luci-lib-docker/
+          [ -d /tmp/source/htdoc ] && cp -R /tmp/source/htdoc/* /tmp/luci-lib-docker/www/
+          mkdir -p /tmp/luci-lib-docker/CONTROL
+          cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
+          Package: luci-lib-docker
+          Version: 0.1-by-actions
+          Architecture: all
+          Maintainer: lisaac<lisaac.cn@gmail.com>
+          Section: base
+          Priority: optional
+          Description: Docker Engine API for LuCI
+          Source: http://github.com/lisaac/luci-lib-docker
+          EOF
+          wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build
+          chmod +x /tmp/ipkg-build
+          /tmp/ipkg-build -o root -g root /tmp/luci-lib-docker /tmp
         
