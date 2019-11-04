@@ -34,7 +34,7 @@ jobs:
           Description: Docker Engine API for LuCI
           Source: http://github.com/lisaac/luci-lib-docker
           EOF
-          cat >/tmp/luci-app-docker/CONTROL/postinst <<EOF
+          cat >/tmp/luci-lib-docker/CONTROL/postinst <<EOF
           #!/bin/sh
           rm -rf /tmp/luci*
           EOF
