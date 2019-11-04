@@ -26,12 +26,17 @@ jobs:
           cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
           Package: luci-lib-docker
           Version: ${TAG}
+          Depends: luci-lib-json
           Architecture: all
           Maintainer: lisaac<lisaac.cn@gmail.com>
           Section: base
           Priority: optional
           Description: Docker Engine API for LuCI
           Source: http://github.com/lisaac/luci-lib-docker
+          EOF
+          cat >/tmp/luci-app-docker/CONTROL/postinst <<EOF
+          #!/bin/sh
+          rm -rf /tmp/luci*
           EOF
           wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build && \
           chmod +x /tmp/ipkg-build && \
