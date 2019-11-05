@@ -105,10 +105,28 @@ end
 local send_http_socket = function(socket_path, req)
   local docker_socket = nixio.socket("unix", "stream")
   if docker_socket:connect(socket_path) ~= true then
-    return 'HTTP/1.1 400 bad socket path\r\n{"message":"can\'t connect to unix socket"}'
+    return {
+      headers={
+        code=497,
+        message="bad socket path",
+        protocol="HTTP/1.1"
+      },
+      body={
+        message="can\'t connect to unix socket"
+      }
+    }
   end
   if docker_socket:send(req) == 0 then
-    return 'HTTP/1.1 400 send socket error\r\n{"message":"can\'t send data to unix socket"}'
+    return {
+      headers={
+        code=498,
+        message="bad socket path",
+        protocol="HTTP/1.1"
+      },
+      body={
+        message="can\'t send data to unix socket"
+      }
+    }
   end
   -- local data, err_code, err_msg, data_f = docker_socket:readall()
   -- docker_socket:close()
@@ -120,7 +138,16 @@ local send_http_socket = function(socket_path, req)
   local line = linesrc()
   if not line then
     docker_socket:close()
-    return {code = 554}
+    return {
+      headers={
+        code=499,
+        message="bad socket path",
+        protocol="HTTP/1.1"
+      },
+      body={
+        message="no data receive from socket"
+      }
+    }
   end
   local response = {code = 0, headers = {}, body = {}}
 
@@ -246,7 +273,7 @@ local gen_api = function(_table, http_method, api_group, api_action)
       return response
     end
     local response = send_http_require(self.options, http_method, api_group, _api_action, name_or_id, request_qurey, request_body)
-    if response.headers["Content-Type"] == "application/json" then
+    if response.headers and response.headers["Content-Type"] == "application/json" then
       if #response.body == 1 then
         response.body = json_parse(response.body[1])
       else
@@ -315,6 +342,7 @@ gen_api(_docker, "POST", "networks", "disconnect")
 gen_api(_docker, "POST", "networks", "prune")
 
 gen_api(_docker, "GET", nil, "events")
+gen_api(_docker, "GET", nil, "version")
 
 function _docker.new(options)
   local docker = {}
