@@ -1,7 +1,7 @@
 # Docker Engine API for LuCI
 
 This is a simple Docker Engine API for LuCI, Now we can operating Docker in LuCI by this lib.
-
+Depends: luci-lib-json
 QUICK START:
 ```lua
 local docker = require "luci.docker"

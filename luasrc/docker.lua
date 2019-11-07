@@ -190,9 +190,9 @@ local send_http_require = function(options, method, api_group, api_action, name_
   local req_options = setmetatable({}, {__index = options})
 
   -- for docker action status
-  if options.status_enabled then
-    fs.writefile(options.status_path, api_group or "" .. " " .. api_action or "" .. " " .. name_or_id or "")
-  end
+  -- if options.status_enabled then
+  --   fs.writefile(options.status_path, api_group or "" .. " " .. api_action or "" .. " " .. name_or_id or "")
+  -- end
 
   -- request_qurey = request_qurey or {}
   -- request_body = request_body or {}
@@ -226,9 +226,9 @@ local send_http_require = function(options, method, api_group, api_action, name_
   -- end
   local response = send_http_socket(req_options.socket_path, gen_http_req(req_options))
   -- for docker action status
-  if options.status_enabled then
-    fs.remove(options.status_path)
-  end
+  -- if options.status_enabled then
+  --   fs.remove(options.status_path)
+  -- end
   return response
 end
 
@@ -353,8 +353,8 @@ function _docker.new(options)
     version = _options.version or "v1.40",
     user_agent = _options.user_agent or "LuCI",
     protocol = _options.protocol or "HTTP/1.1",
-    status_enabled = _options.status_enabled or true,
-    status_path = _options.status_path or "/tmp/.docker_action_status",
+    -- status_enabled = _options.status_enabled or true,
+    -- status_path = _options.status_path or "/tmp/.docker_action_status",
     debug = _options.debug or false,
     debug_path = _options.debug_path or "/tmp/.docker_debug"
   }
