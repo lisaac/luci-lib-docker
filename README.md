@@ -4,8 +4,8 @@ This is a simple Docker Engine API for LuCI, Now we can operating Docker in LuCI
 
 ## Compile:
 ```bash
-./script/feeds update luci-lib-json
-./script/feeds install luci-lib-json
+./scripts/feeds update luci-lib-json
+./scripts/feeds install luci-lib-json
 git clone https://github.com/lisaac/luci-lib-docker.git package/luci-lib-docker
 
 #compile package only
@@ -18,7 +18,11 @@ make menuconfig
 make V=99
 ```
 
-## Depends: luci-lib-json
+## Depends: 
+luci-lib-json
+
+## Download:
+- [ipk file](https://github.com/lisaac/luci-lib-docker/releases)
 
 ## QUICK START:
 ```lua
