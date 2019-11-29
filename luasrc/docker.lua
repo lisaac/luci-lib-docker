@@ -236,6 +236,8 @@ local gen_api = function(_table, http_method, api_group, api_action)
   local _api_action
   if api_action == "get_archive" or api_action == "put_archive" then
     _api_action = "archive"
+  elseif api_action == "df" then
+    _api_action = "system/df"
   elseif api_action ~= "list" and api_action ~= "inspect" and api_action ~= "remove" then
     _api_action = api_action
   elseif (api_group == "containers" or api_group == "images" or api_group == "exec") and (api_action == "list" or api_action == "inspect") then
@@ -343,6 +345,9 @@ gen_api(_docker, "POST", "networks", "prune")
 
 gen_api(_docker, "GET", nil, "events")
 gen_api(_docker, "GET", nil, "version")
+gen_api(_docker, "GET", nil, "info")
+gen_api(_docker, "GET", nil, "_ping")
+gen_api(_docker, "GET", nil, "df")
 
 function _docker.new(options)
   local docker = {}
