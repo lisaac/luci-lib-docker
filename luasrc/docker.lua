@@ -5,7 +5,7 @@ local nixio = require "nixio"
 local ltn12 = require "luci.ltn12"
 local fs = require "nixio.fs"
 
-local urlencode = luci.http and (luci.http.protocol and luci.http.protocol.urlencode or luci.util.urlencode)
+local urlencode = luci.util.urlencode or luci.http and luci.http.protocol and luci.http.protocol.urlencode
 local json_stringify = json.encode --luci.json and luci.json.encode or luci.jsonc.stringify
 local json_parse = json.decode --luci.json and luci.json.decode or luci.jsonc.parse
 
