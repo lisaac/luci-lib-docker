@@ -343,6 +343,11 @@ gen_api(_docker, "POST", "networks", "connect")
 gen_api(_docker, "POST", "networks", "disconnect")
 gen_api(_docker, "POST", "networks", "prune")
 
+gen_api(_docker, "GET", "volumes", "list")
+gen_api(_docker, "GET", "volumes", "inspect")
+gen_api(_docker, "DELETE", "volumes", "remove")
+gen_api(_docker, "POST", "volumes", "create")
+
 gen_api(_docker, "GET", nil, "events")
 gen_api(_docker, "GET", nil, "version")
 gen_api(_docker, "GET", nil, "info")
@@ -397,6 +402,16 @@ function _docker.new(options)
   )
   setmetatable(
     docker.images,
+    {
+      __index = function(t, key)
+        if key == "options" then
+          return docker.options
+        end
+      end
+    }
+  )
+  setmetatable(
+    docker.volumes,
     {
       __index = function(t, key)
         if key == "options" then
