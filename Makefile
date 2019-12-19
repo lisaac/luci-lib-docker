@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-lib-docker
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.1.1
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=lisaac <https://github.com/lisaac/luci-lib-docker>
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
