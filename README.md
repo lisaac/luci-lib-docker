@@ -135,8 +135,8 @@ stdout: 2019/09/12 12:57:05 /api/renew: 403 10.1.1.216:35818 <nil>
 ]]
 
 
-response = d.containers:get_archive("filebrowser", {path="/tmp/myfiles.tar.gz"})
-nixio.fs.writefile("/tmp/myfiles.tar.gz", table.concat(response.body))
+response = d.containers:get_archive("filebrowser", {path="/tmp/myfiles"})
+nixio.fs.writefile("/tmp/myfiles.tar", table.concat(response.body))
 
 f = nixio.fs.readfile("/tmp/myfiles.tar.gz")
 response = d.containers:put_archive("filebrowser", {path="/tmp/"}, f)
