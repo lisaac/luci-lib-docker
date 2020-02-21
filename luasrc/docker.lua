@@ -1,13 +1,13 @@
 require "nixio.util"
 require "luci.util"
- local json = require "luci.json"
+local jsonc = require "luci.jsonc"
 local nixio = require "nixio"
 local ltn12 = require "luci.ltn12"
 local fs = require "nixio.fs"
 
 local urlencode = luci.util.urlencode or luci.http and luci.http.protocol and luci.http.protocol.urlencode
-local json_stringify = json.encode --luci.json and luci.json.encode or luci.jsonc.stringify
-local json_parse = json.decode --luci.json and luci.json.decode or luci.jsonc.parse
+local json_stringify = jsonc.stringify
+local json_parse = jsonc.parse
 
 local chunksource = function(sock, buffer)
   buffer = buffer or ""
