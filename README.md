@@ -28,9 +28,9 @@ luci-lib-jsonc
 ```lua
 local docker = require "luci.docker"
 d = docker.new()
-response_str = d.containers:list("container_name") 
+response_str = d.containers:list({name = "container_name"}) 
 --[[
--- if operate container, just using: d:list("container_name")
+-- if operate container, just using: d:list({name = "container_name"})
 -- return an response(table type) like this:
 {
   message = OK
@@ -86,10 +86,10 @@ response_str = d.containers:list("container_name")
   }
 }
 ]]
-response = d.containers:list(nil, request_qurey)
-response = d.containers:create("container_name", request_qurey, request_body)
+response = d.containers:list({query = request_qurey})
+response = d.containers:create({id = "container_name", query = request_qurey, body = request_body})
 response = d.networks:list()
-response = d:logs("filebrowser", {stdout=1})
+response = d:logs({name_or_id = "filebrowser", query = {stdout=1}})
 --[[
 
 {
@@ -135,11 +135,11 @@ stdout: 2019/09/12 12:57:05 /api/renew: 403 10.1.1.216:35818 <nil>
 ]]
 
 
-response = d.containers:get_archive("filebrowser", {path="/tmp/myfiles"})
+response = d.containers:get_archive({name = "filebrowser", query = {path="/tmp/myfiles"})
 nixio.fs.writefile("/tmp/myfiles.tar", table.concat(response.body))
 
 f = nixio.fs.readfile("/tmp/myfiles.tar.gz")
-response = d.containers:put_archive("filebrowser", {path="/tmp/"}, f)
+response = d.containers:put_archive({name = "filebrowser", query = {path="/tmp/"}, body = f})
 --[[
   {
     message = OK
