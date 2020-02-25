@@ -27,7 +27,12 @@ luci-lib-jsonc
 ## QUICK START:
 ```lua
 local docker = require "luci.docker"
-d = docker.new()
+
+-- local endpoint
+d = docker.new({socket_path = "/var/run/docker.sock"})
+-- remote endpoint
+d = docker.new({host = "10.1.1.2", port = "2375"})
+
 response_str = d.containers:list({name = "container_name"}) 
 --[[
 -- if operate container, just using: d:list({name = "container_name"})
