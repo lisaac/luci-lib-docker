@@ -345,7 +345,8 @@ gen_api(_docker, "POST", "images", "tag")
 gen_api(_docker, "DELETE", "images", "remove")
 gen_api(_docker, "GET", "images", "search")
 gen_api(_docker, "POST", "images", "prune")
--- TODO: build clear push commit export import
+gen_api(_docker, "GET", "images", "get")
+gen_api(_docker, "POST", "images", "load")
 
 gen_api(_docker, "GET", "networks", "list")
 gen_api(_docker, "GET", "networks", "inspect")
