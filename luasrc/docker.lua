@@ -180,8 +180,6 @@ end
 
 local gen_header = function(options, http_method, api_group, api_action, name_or_id, request)
   local header, query, path
-  options = options or {}
-  options.protocol = options.protocol or "HTTP/1.1"
   name_or_id = (name_or_id ~= "") and name_or_id or nil
 
   if request and type(request.query) == "table" then
@@ -372,8 +370,8 @@ function _docker.new(options)
   local _options = options or {}
   docker.options = {
     socket_path = _options.socket_path or nil,
-    host = _options.host or "localhost",
-    port = _options.port or "2375",
+    host = _options.socket_path and "localhost" or _options.host,
+    port = not _options.socket_path and _options.port or nil,
     tls = _options.tls or nil,
     tls_cacert = _options.tls and _options.tls_cacert or nil,
     tls_cert = _options.tls and _options.tls_cert or nil,
