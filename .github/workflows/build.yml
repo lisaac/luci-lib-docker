@@ -26,7 +26,7 @@ jobs:
           cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
           Package: luci-lib-docker
           Version: ${TAG}
-          Depends: luci-lib-json
+          Depends: luci-lib-jsonc
           Architecture: all
           Maintainer: lisaac<lisaac.cn@gmail.com>
           Section: base
