@@ -19,9 +19,9 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           echo ::set-output name=tag_name::${TAG}
           mkdir -p /tmp/luci-lib-docker/usr/lib/lua/luci /tmp/luci-lib-docker/www/
-          [ -d $GITHUB_WORKSPACE/luasrc ] && cp -R $GITHUB_WORKSPACE/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci/
-          [ -d $GITHUB_WORKSPACE/root ] && cp -R $GITHUB_WORKSPACE/root/* /tmp/luci-lib-docker/
-          [ -d $GITHUB_WORKSPACE/htdoc ] && cp -R $GITHUB_WORKSPACE/htdoc/* /tmp/luci-lib-docker/www/
+          [ -d $GITHUB_WORKSPACE/collections/luci-lib-docker/luasrc ] && cp -R $GITHUB_WORKSPACE/collections/luci-lib-docker/luasrc/* /tmp/luci-lib-docker/usr/lib/lua/luci/
+          [ -d $GITHUB_WORKSPACE/collections/luci-lib-docker/root ] && cp -R $GITHUB_WORKSPACE/collections/luci-lib-docker/root/* /tmp/luci-lib-docker/
+          [ -d $GITHUB_WORKSPACE/collections/luci-lib-docker/htdoc ] && cp -R $GITHUB_WORKSPACE/collections/luci-lib-docker/htdoc/* /tmp/luci-lib-docker/www/
           mkdir -p /tmp/luci-lib-docker/CONTROL
           cat >/tmp/luci-lib-docker/CONTROL/control <<EOF
           Package: luci-lib-docker
