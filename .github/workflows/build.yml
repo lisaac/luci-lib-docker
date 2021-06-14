@@ -39,7 +39,7 @@ jobs:
           rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
           EOF
           chmod +x /tmp/luci-lib-docker/CONTROL/postinst
-          wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build && \
+          wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/openwrt-18.06/scripts/ipkg-build && \
           chmod +x /tmp/ipkg-build && \
           /tmp/ipkg-build -o root -g root /tmp/luci-lib-docker /tmp
       - name: Create Release
