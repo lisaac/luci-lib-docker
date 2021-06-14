@@ -2,22 +2,6 @@
 
 This is a simple Docker Engine API for LuCI, Now we can operating Docker in LuCI by this lib.
 
-## Compile:
-```bash
-./scripts/feeds update luci-lib-jsonc
-./scripts/feeds install luci-lib-jsonc
-wget https://raw.githubusercontent.com/lisaac/luci-lib-docker/master/Makefile -P package/luci-lib-docker
-
-#compile package only
-make package/luci-lib-jsonc/compile V=99
-make package/luci-lib-docker/compile v=99
-
-#compile
-make menuconfig
-#choose LuCI ---> 6. Libraries  ---> {*} luci-lib-docker.......Docker Engine API for LuCI ----> save
-make V=99
-```
-
 ## Depends: 
 luci-lib-jsonc
 
